@@ -20,6 +20,8 @@ struct ProductGridItemView: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             VStack(alignment: .leading) {
+                
+                // MARK: - Изображение товара и лейблы
                 ZStack(alignment: .topLeading) {
                     Image(productItem.imageName)
                         .resizable()
@@ -40,6 +42,7 @@ struct ProductGridItemView: View {
                     }
                 }
                 
+                // MARK: - Рейтинг и Sale Label
                 HStack {
                     HStack(spacing: 2) {
                         Image(systemName: "star.fill")
@@ -60,6 +63,7 @@ struct ProductGridItemView: View {
                         .padding(.horizontal, 5)
                 }
                 
+                // MARK: - Название товара и флаг страны
                 VStack(alignment: .leading, spacing: 4) {
                     Text(productItem.itemName)
                         .font(.system(size: 14, weight: .regular))
@@ -78,6 +82,7 @@ struct ProductGridItemView: View {
                 
                 Spacer(minLength: 50)
                 
+                // MARK: - Цена и кнопка добавления в корзину
                 if !isBasketExpanded {
                     HStack {
                         VStack(alignment: .leading) {
@@ -142,6 +147,7 @@ struct ProductGridItemView: View {
                     }
                     .padding(.horizontal, 4)
                 } else {
+                    // MARK: - Расширенный вид корзины
                     Button(action: {
                         if quantity <= 0 {
                             basketManager.removeItem(productItem)
@@ -205,6 +211,7 @@ struct ProductGridItemView: View {
             .cornerRadius(10)
             .shadow(color: Color.black.opacity(0.1), radius: 5, x: 5, y: 5)
             
+            // MARK: - Белый прямоугольник с иконками
             ZStack(alignment: .topTrailing) {
                 VStack(spacing: 8) {
                     Button(action: {
@@ -232,6 +239,7 @@ struct ProductGridItemView: View {
         .environmentObject(BasketManager.shared)
     }
     
+    // MARK: - Функция для определения цвета фона лейбла
     private func badgeColor(for badgeType: BadgeType) -> Color {
         switch badgeType {
         case .discounted:
@@ -243,15 +251,27 @@ struct ProductGridItemView: View {
         }
     }
     
+    // MARK: - Шаг изменения количества
     private func step(for unit: Unit) -> Double {
         switch unit {
         case .piece:
-            return 1.0
+            return 1
         case .kilogram:
             return 0.1
         }
     }
 }
+
+struct ProductGridItemView_Previews: PreviewProvider {
+    static var previews: some View {
+        // Выберите продукт из sampleProducts для предпросмотра
+        ProductGridItemView(productItem: sampleProducts[0])
+            .previewLayout(.sizeThatFits)
+            .environmentObject(BasketManager())
+    }
+}
+
+
 
 
 
