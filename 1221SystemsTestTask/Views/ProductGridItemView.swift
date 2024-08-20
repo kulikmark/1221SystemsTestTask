@@ -81,27 +81,31 @@ struct ProductGridItemView: View {
                 if !isBasketExpanded {
                     HStack {
                         VStack(alignment: .leading) {
-                            HStack(spacing: 3) {
-                                Text(String(format: "%.0f", productItem.price))
+                            HStack(spacing: 2) {
+                                let formattedPrice = String(format: "%.2f", productItem.price)
+                                let integerPart = formattedPrice.split(separator: ".").first ?? "0"
+                                let decimalPart = formattedPrice.split(separator: ".").last ?? "00"
+
+                                Text("\(integerPart)")
                                     .font(.system(size: 20))
                                     .fontWeight(.bold)
-                                
-                                Text(String(format: "%.2f", productItem.price).split(separator: ".").last ?? "")
+
+                                Text("\(decimalPart)")
                                     .font(.system(size: 16))
                                     .fontWeight(.bold)
                                     .foregroundColor(.black)
-                                
+
                                 Text("₽")
                                     .font(.system(size: 10))
                                     .fontWeight(.bold)
                                     .foregroundColor(.black)
                                     .offset(x: 9, y: -4)
-                                
+
                                 Rectangle()
                                     .fill(Color.black)
                                     .frame(width: 17, height: 1.4)
                                     .rotationEffect(.degrees(-45))
-                                
+
                                 Text(productItem.unit.rawValue)
                                     .font(.system(size: 10))
                                     .foregroundColor(.black)

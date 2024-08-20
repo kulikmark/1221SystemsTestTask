@@ -39,7 +39,7 @@ struct ProductListView: View {
                             Image(systemName: "cart")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 24, height: 24)
+                                .frame(width: 18, height: 18)
                                 .padding()
                                 .background(Color.gray.opacity(0.2))
                                 .cornerRadius(8)

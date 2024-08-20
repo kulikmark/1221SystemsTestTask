@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct BasketView: View {
     @EnvironmentObject var basketManager: BasketManager
     
@@ -17,20 +19,38 @@ struct BasketView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(item.itemName)
-                        Text(String(format: "%.2f ₽", item.price))
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                        
+                        // Отображение общей цены за все количество товара
+                        if let quantity = basketManager.items[item] {
+                            let totalPrice = item.price * quantity
+                            Text(String(format: "%.2f ₽", totalPrice))
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                        }
                     }
                     Spacer()
-                    Text(String(format: "%.1f %@", basketManager.items[item] ?? 0.0, item.unit.rawValue))
-                        .font(.subheadline)
-                        .foregroundColor(.black)
+                    
+                    // Отображение количества товара
+                    if let quantity = basketManager.items[item] {
+                        Text(formatQuantity(quantity, unit: item.unit))
+                            .font(.subheadline)
+                            .foregroundColor(.black)
+                    }
                 }
                 .padding(.vertical, 4)
             }
         }
         .navigationTitle("Basket")
         .navigationBarItems(trailing: EditButton())
+    }
+    
+    // Функция для форматирования количества товара
+    private func formatQuantity(_ quantity: Double, unit: Unit) -> String {
+        if quantity == floor(quantity) {
+            return String(format: "%.0f %@", quantity, unit.rawValue) // Отображение целого числа
+        } else {
+            return String(format: "%.1f %@", quantity, unit.rawValue) // Отображение дробного числа
+        }
     }
 }
 
