@@ -47,9 +47,9 @@ struct BasketView: View {
     // Функция для форматирования количества товара
     private func formatQuantity(_ quantity: Double, unit: Unit) -> String {
         if quantity == floor(quantity) {
-            return String(format: "%.0f %@", quantity, unit.rawValue) // Отображение целого числа
+            return String(format: "%.0f %@", quantity, unit.rawValue)
         } else {
-            return String(format: "%.1f %@", quantity, unit.rawValue) // Отображение дробного числа
+            return String(format: "%.1f %@", quantity, unit.rawValue)
         }
     }
 }
