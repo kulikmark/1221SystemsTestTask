@@ -21,7 +21,8 @@ let sampleProducts: [ProductItem] = [
         rating: 4.9,
         badgeType: nil,
         saleLabel: "25%",
-        country: "США 🇺🇸"
+        country: "США 🇺🇸",
+        comments: 19
     ),
     
     // Цена по карте
@@ -33,7 +34,9 @@ let sampleProducts: [ProductItem] = [
         oldPrice: 109.0,
         rating: 4.3,
         badgeType: .cardPrice,
-        saleLabel: "50%", country: "Россия 🇷🇺"
+        saleLabel: "50%",
+        country: "Россия 🇷🇺",
+        comments: 2
     ),
     
     // Продукт со скидкой
@@ -46,7 +49,8 @@ let sampleProducts: [ProductItem] = [
         rating: 4.1,
         badgeType: .discounted,
         saleLabel: nil,
-        country: "Франция 🇫🇷"
+        country: "Франция 🇫🇷",
+        comments: 10
     ),
     
     // Продукт со скидкой
@@ -58,7 +62,9 @@ let sampleProducts: [ProductItem] = [
         oldPrice: 79.0,
         rating: 4.6,
         badgeType: .discounted,
-        saleLabel: nil, country: "Россия 🇷🇺"
+        saleLabel: nil,
+        country: "Россия 🇷🇺",
+        comments: 5
     ),
     
     // Новинка
@@ -70,7 +76,9 @@ let sampleProducts: [ProductItem] = [
         oldPrice: nil,
         rating: 4.5,
         badgeType: .new,
-        saleLabel: nil, country: "Германия 🇩🇪"
+        saleLabel: nil,
+        country: "Германия 🇩🇪",
+        comments: 9
     ),
     
     // Новинка
@@ -82,6 +90,8 @@ let sampleProducts: [ProductItem] = [
         oldPrice: nil,
         rating: 4.2,
         badgeType: .new,
-        saleLabel: "10%", country: "Испания 🇪🇸"
+        saleLabel: "10%",
+        country: "Испания 🇪🇸",
+        comments: 3
     )
 ]

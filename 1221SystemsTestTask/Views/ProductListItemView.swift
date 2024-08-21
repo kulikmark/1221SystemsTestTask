@@ -8,39 +8,291 @@
 import SwiftUI
 
 struct ProductListItemView: View {
-    let productItem: ProductItem
+    var productItem: ProductItem
+    
+    @State private var isFavorite: Bool = false
+    @State private var isBasketExpanded: Bool = false
+    
+    @State private var quantity: Double = 0
+    
+    @EnvironmentObject var basketManager: BasketManager
     
     var body: some View {
-        HStack {
-            Image(productItem.imageName)
-                .resizable()
-                .frame(width: 50, height: 50)
-                .cornerRadius(5)
-            
-            VStack(alignment: .leading) {
-                Text(productItem.itemName)
-                    .font(.headline)
-                Text("\(String(format: "%.2f", productItem.price)) ₽/\(productItem.unit)")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-            }
-            
-            Spacer()
-            
-            if let oldPrice = productItem.oldPrice {
-                Text("\(String(format: "%.2f", oldPrice)) ₽")
-                    .font(.subheadline)
-                    .strikethrough()
-                    .foregroundColor(.gray)
+        VStack {
+            HStack(alignment: .top) {
+                // MARK: - Левый блок
+                ZStack {
+                    Image(productItem.imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 144, height: 144)
+                        .cornerRadius(10)
+                        .clipped()
+                    
+                    VStack {
+                        HStack {
+                            if let badgeType = productItem.badgeType {
+                                Text(badgeType.rawValue)
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 4)
+                                    .background(badgeColor(for: badgeType))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(10, corners: [.topLeft, .topRight, .bottomRight])
+                                    .padding([.top, .leading], 0)
+                            }
+                            Spacer()
+                        }
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            if let saleLabel = productItem.saleLabel {
+                                Text(saleLabel)
+                                    .font(.system(size: 16))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(Color(UIColor(red: 195/255, green: 35/255, blue: 35/255, alpha: 1.0)))
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 2)
+                                    .background(Color.white.opacity(0.7))
+                                    .cornerRadius(8)
+                                    .padding([.trailing, .bottom], 4)
+                            }
+                        }
+                    }
+                }
+                .padding([.leading, .top, .bottom], 16)
+
+                // MARK: - Правый блок
+                VStack(alignment: .leading, spacing: 8) {
+                    // Рейтинг, отзывы, название товара, флаг страны и иконки
+                    HStack(alignment: .top) {
+                        // Вся левая часть: Рейтинг, отзывы, название товара и флаг страны
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack(spacing: 4) {
+                                HStack(spacing: 2) {
+                                    Image(systemName: "star.fill")
+                                        .foregroundColor(.yellow)
+                                        .font(.system(size: 12))
+                                    Text(String(format: "%.1f", productItem.rating))
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.gray)
+                                }
+
+                                Rectangle()
+                                    .fill(Color(UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 0.6)))
+                                    .frame(width: 1, height: 14)
+                                    .padding(.horizontal, 4)
+
+                                if let comments = productItem.comments {
+                                    Text("\(Int(comments)) отзывов")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.gray)
+                                }
+                            }
+
+                            Text(productItem.itemName)
+                                .font(.system(size: 14, weight: .regular))
+                                .lineLimit(2)
+                                .foregroundColor(Color(UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 0.8)))
+
+                            Text(productItem.country ?? "")
+                                .font(.system(size: 14))
+                                .foregroundColor(Color(UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 0.6)))
+                        }
+                        
+                        Spacer()
+
+                        // Белый прямоугольник с иконками
+                        VStack(spacing: 18) {
+                            Button(action: {
+                                // Add to the order list
+                            }) {
+                                Image("order_list_icon")
+                                    .resizable()
+                                    .frame(width: 16, height: 16)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            Button(action: {
+                                isFavorite.toggle()
+                            }) {
+                                Image(isFavorite ? "heart_icon_fill" : "heart_icon")
+                                    .resizable()
+                                    .frame(width: 16, height: 16)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        .frame(width: 32)
+                        .background(Color.white.opacity(0.8))
+                        .cornerRadius(10)
+                        .padding(.leading, 10)
+                    }
+                    
+                    Spacer()
+                    
+                    // MARK: - Цена и кнопка добавления в корзину
+                    if !isBasketExpanded {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                HStack(spacing: 2) {
+                                    let formattedPrice = String(format: "%.2f", productItem.price)
+                                    let integerPart = formattedPrice.split(separator: ".").first ?? "0"
+                                    let decimalPart = formattedPrice.split(separator: ".").last ?? "00"
+
+                                    Text("\(integerPart)")
+                                        .font(.system(size: 20))
+                                        .fontWeight(.bold)
+
+                                    Text("\(decimalPart)")
+                                        .font(.system(size: 16))
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.black)
+
+                                    Text("₽")
+                                        .font(.system(size: 10))
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.black)
+                                        .offset(x: 9, y: -4)
+
+                                    Rectangle()
+                                        .fill(Color.black)
+                                        .frame(width: 17, height: 1.4)
+                                        .rotationEffect(.degrees(-45))
+
+                                    Text(productItem.unit.rawValue)
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.black)
+                                        .offset(x: -9, y: 4)
+                                }
+                                
+                                if let oldPrice = productItem.oldPrice {
+                                    Text("\(String(format: "%.2f", oldPrice)) ₽")
+                                        .font(.system(size: 12))
+                                        .strikethrough()
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                            .padding(.bottom, 4)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                isBasketExpanded.toggle()
+                                if isBasketExpanded {
+                                    quantity = productItem.unit == .piece ? 1 : 0.1
+                                    basketManager.addItem(productItem, quantity: quantity)
+                                }
+                            }) {
+                                Image("basket")
+                                    .resizable()
+                                    .frame(width: 16, height: 16)
+                                    .padding()
+                                    .background(Color(UIColor(red: 21/255, green: 183/255, blue: 66/255, alpha: 1.0)))
+                                    .frame(width: 48, height: 36)
+                                    .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
+                                    .padding(.bottom, 4)
+                            }
+                            .buttonStyle(PlainButtonStyle()) // Предотвращает срабатывание кнопки корзины при нажатии на любую область карточки
+                        }
+                        .padding(.horizontal, 4)
+                        
+                    } else {
+                        // MARK: - Расширенный вид корзины
+                        Button(action: {
+                            if quantity <= 0 {
+                                basketManager.removeItem(productItem)
+                                isBasketExpanded = false
+                            } else {
+                                basketManager.addItem(productItem, quantity: quantity)
+                            }
+                        }) {
+                            HStack {
+                                Button(action: {
+                                    if quantity > 0 {
+                                        quantity -= step(for: productItem.unit)
+                                        if quantity <= 0 {
+                                            basketManager.removeItem(productItem)
+                                            isBasketExpanded = false
+                                        } else {
+                                            basketManager.addItem(productItem, quantity: quantity)
+                                        }
+                                    }
+                                }) {
+                                    Image(systemName: "minus")
+                                        .font(.system(size: 20, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 10)
+                                }
+                                
+                                Spacer()
+                                
+                                VStack(alignment: .center, spacing: 5) {
+                                    Text(String(format: quantity == floor(quantity) ? "%.0f %@" : "%.1f %@", quantity, productItem.unit.rawValue))
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(.white)
+                                    
+                                    Text(String(format: "%.2f ₽", quantity * productItem.price))
+                                        .font(.system(size: 12, weight: .regular))
+                                        .foregroundColor(.white)
+                                }
+                                .padding(.top, 2)
+                                .padding(.bottom, 2)
+                                
+                                Spacer()
+                                
+                                Button(action: {
+                                    quantity += step(for: productItem.unit)
+                                    basketManager.addItem(productItem, quantity: quantity)
+                                }) {
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 20, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 10)
+                                }
+                            }
+                            .background(Color(UIColor(red: 21/255, green: 183/255, blue: 66/255, alpha: 1.0)))
+                            .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
+                            .padding(.horizontal, 4)
+                            .padding(.bottom, 4)
+                        }
+                    }
+                }
+                .padding([.top, .bottom], 16)
+                .padding([.leading, .trailing], 8)
+                .frame(maxWidth: .infinity)
             }
         }
-        .padding()
+        .environmentObject(BasketManager.shared)
+    }
+    
+    // MARK: - Функция для определения цвета фона лейбла
+    private func badgeColor(for badgeType: BadgeType) -> Color {
+        switch badgeType {
+        case .discounted:
+            return Color(UIColor(red: 252/255, green: 106/255, blue: 106/255, alpha: 0.90))
+        case .new:
+            return Color(UIColor(red: 122/255, green: 121/255, blue: 186/255, alpha: 0.90))
+        case .cardPrice:
+            return Color(UIColor(red: 91/255, green: 205/255, blue: 123/255, alpha: 0.90))
+        }
+    }
+    
+    // MARK: - Шаг изменения количества
+    private func step(for unit: Unit) -> Double {
+        switch unit {
+        case .piece:
+            return 1
+        case .kilogram:
+            return 0.1
+        }
     }
 }
 
-//struct ProductListItemView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        // Создаем продукт для предварительного просмотра
-//        ProductListItemView(productItem: ProductItem(name: "Сыр Ламбер 500/0 230г", imageName: "cheese", price: 99.90, oldPrice: 199.0, rating: 4.1, isDiscounted: true, unit: "кг"))
-//    }
-//}
+struct ProductListItemView_Previews: PreviewProvider {
+    static var previews: some View {
+        ProductListItemView(productItem: sampleProducts[0])
+            .previewLayout(.sizeThatFits)
+            .environmentObject(BasketManager())
+    }
+}

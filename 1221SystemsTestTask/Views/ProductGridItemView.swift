@@ -47,9 +47,9 @@ struct ProductGridItemView: View {
                     HStack(spacing: 2) {
                         Image(systemName: "star.fill")
                             .foregroundColor(.yellow)
-                            .font(.caption)
+                            .font(.system(size: 12))
                         Text(String(format: "%.1f", productItem.rating))
-                            .font(.caption)
+                            .font(.system(size: 12))
                             .foregroundColor(.gray)
                     }
                     .padding(.leading, 4)
@@ -213,9 +213,9 @@ struct ProductGridItemView: View {
             
             // MARK: - Белый прямоугольник с иконками
             ZStack(alignment: .topTrailing) {
-                VStack(spacing: 8) {
+                VStack(spacing: 18) {
                     Button(action: {
-                        // Navigate to the order list
+                        // Add to the order list
                     }) {
                         Image("order_list_icon")
                             .resizable()
@@ -270,9 +270,6 @@ struct ProductGridItemView_Previews: PreviewProvider {
             .environmentObject(BasketManager())
     }
 }
-
-
-
 
 
 // MARK: - Расширение для закругленных углов

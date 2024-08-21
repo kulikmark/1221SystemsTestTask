@@ -28,6 +28,7 @@ struct BasketView: View {
                                 .foregroundColor(.gray)
                         }
                     }
+                    
                     Spacer()
                     
                     // Отображение количества товара

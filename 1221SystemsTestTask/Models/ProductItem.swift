@@ -29,6 +29,7 @@ struct ProductItem: Identifiable, Hashable {
     let badgeType: BadgeType?
     let saleLabel: String?
     let country: String?
+    let comments: Int?
     
     // Hashable conformance
     func hash(into hasher: inout Hasher) {
